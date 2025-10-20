@@ -7,7 +7,7 @@ import java.util.Scanner;
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 
-public class AESComBiblioteca {
+public class AesCipher {
 
     private static final String ALGORITMO = "AES";
     private static final String TRANSFORMACAO = "AES/ECB/PKCS5Padding";
@@ -25,8 +25,8 @@ public class AESComBiblioteca {
 
                 do {
                     System.out.print("Entre o caminho do arquivo que quer cifrar (a partir do diretório atual): ");
-                    String caminhoDoArquivo = System.getProperty("user.dir") + scanner.next();
-                    file = new File(caminhoDoArquivo);
+                    String caminhoArquivo = System.getProperty("user.dir") + scanner.next();
+                    file = new File(caminhoArquivo);
 
                     if (!file.exists()) {
                         System.out.println("ERRO: arquivo não encontrado.");
@@ -43,12 +43,12 @@ public class AESComBiblioteca {
                 }
 
                 Path path;
-                String caminhoDoArquivoCifrado;
+                String caminhoArquivoCifrado;
 
                 do {
                     System.out.print("Onde guardar o arquivo cifrado (a partir do diretório atual)? ");
-                    caminhoDoArquivoCifrado = System.getProperty("user.dir") + scanner.next();
-                    path = Paths.get(caminhoDoArquivoCifrado);
+                    caminhoArquivoCifrado = System.getProperty("user.dir") + scanner.next();
+                    path = Paths.get(caminhoArquivoCifrado);
 
                     if (!Files.exists(path)) {
                         System.out.println("ERRO: caminho não encontrado.");
@@ -64,8 +64,8 @@ public class AESComBiblioteca {
                 File file;
                 do {
                     System.out.print("Entre o caminho do arquivo que quer decifrar (a partir do diretório atual): ");
-                    String caminhoDoArquivo = System.getProperty("user.dir") + scanner.next();
-                    file = new File(caminhoDoArquivo);
+                    String caminhoArquivo = System.getProperty("user.dir") + scanner.next();
+                    file = new File(caminhoArquivo);
 
                     if (!file.exists()) {
                         System.out.println("ERRO: arquivo não encontrado.");
@@ -77,12 +77,12 @@ public class AESComBiblioteca {
                 String chave = scanner.next();
 
                 Path path;
-                String caminhoDoArquivoDecifrado;
+                String caminhoArquivoDecifrado;
 
                 do {
                     System.out.print("Onde guardar o arquivo decifrado (a partir do diretório atual)? ");
-                    caminhoDoArquivoDecifrado = System.getProperty("user.dir") + scanner.next();
-                    path = Paths.get(caminhoDoArquivoDecifrado);
+                    caminhoArquivoDecifrado = System.getProperty("user.dir") + scanner.next();
+                    path = Paths.get(caminhoArquivoDecifrado);
 
                     if (!Files.exists(path)) {
                         System.out.println("ERRO: caminho não encontrado.");
@@ -103,7 +103,6 @@ public class AESComBiblioteca {
         }
 
         scanner.close();
-
     }
 
     public static byte[] cifrar(byte[] dados, String chave) throws Exception {
@@ -112,7 +111,6 @@ public class AESComBiblioteca {
         cipher.init(Cipher.ENCRYPT_MODE, secretKeySpec);
 
         return cipher.doFinal(dados);
-
     }
 
     public static byte[] decifrar(byte[] dados, String chave) throws Exception {
@@ -121,7 +119,6 @@ public class AESComBiblioteca {
         cipher.init(Cipher.DECRYPT_MODE, secretKeySpec);
 
         return cipher.doFinal(dados);
-
     }
 
     public static byte[] parseChave(String chave) throws Exception {
@@ -134,7 +131,6 @@ public class AESComBiblioteca {
         }
 
         return chaveBytes;
-
     }
 
     public static String gerarChaveAleatoria() {
@@ -149,6 +145,5 @@ public class AESComBiblioteca {
         }
 
         return chaveFormatada.toString();
-
     }
 }

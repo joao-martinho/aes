@@ -6,7 +6,7 @@ import java.util.Arrays;
 import java.util.Random;
 import java.util.Scanner;
 
-public class AES {
+public class Aes {
 
     private final static byte[][] SBOX = {
             { (byte) 0x63, (byte) 0x7C, (byte) 0x77, (byte) 0x7B, (byte) 0xF2, (byte) 0x6B, (byte) 0x6F, (byte) 0xC5, (byte) 0x30, (byte) 0x01, (byte) 0x67, (byte) 0x2B, (byte) 0xFE, (byte) 0xD7, (byte) 0xAB, (byte) 0x76 },
@@ -59,8 +59,8 @@ public class AES {
 
                 do {
                     System.out.print("Entre o caminho do arquivo que quer cifrar (a partir do diretório atual): ");
-                    String caminhoDoArquivo = System.getProperty("user.dir") + scanner.next();
-                    file = new File(caminhoDoArquivo);
+                    String caminhoArquivo = System.getProperty("user.dir") + scanner.next();
+                    file = new File(caminhoArquivo);
 
                     if (!file.exists()) {
                         System.out.println("ERRO: arquivo não encontrado.");
@@ -77,12 +77,12 @@ public class AES {
                 }
 
                 Path path;
-                String caminhoDoArquivoCifrado;
+                String caminhoArquivoCifrado;
 
                 do {
                     System.out.print("Onde guardar o arquivo cifrado (a partir do diretório atual)? ");
-                    caminhoDoArquivoCifrado = System.getProperty("user.dir") + scanner.next();
-                    path = Paths.get(caminhoDoArquivoCifrado);
+                    caminhoArquivoCifrado = System.getProperty("user.dir") + scanner.next();
+                    path = Paths.get(caminhoArquivoCifrado);
 
                     if (!Files.exists(path)) {
                         Files.createFile(path);
@@ -98,8 +98,8 @@ public class AES {
                 File file;
                 do {
                     System.out.print("Entre o caminho do arquivo que quer decifrar (a partir do diretório atual): ");
-                    String caminhoDoArquivo = System.getProperty("user.dir") + scanner.next();
-                    file = new File(caminhoDoArquivo);
+                    String caminhoArquivo = System.getProperty("user.dir") + scanner.next();
+                    file = new File(caminhoArquivo);
 
                     if (!file.exists()) {
                         System.out.println("ERRO: arquivo não encontrado.");
@@ -111,12 +111,12 @@ public class AES {
                 String chave = scanner.next();
 
                 Path path;
-                String caminhoDoArquivoDecifrado;
+                String caminhoArquivoDecifrado;
 
                 do {
                     System.out.print("Onde guardar o arquivo decifrado (a partir do diretório atual)? ");
-                    caminhoDoArquivoDecifrado = System.getProperty("user.dir") + scanner.next();
-                    path = Paths.get(caminhoDoArquivoDecifrado);
+                    caminhoArquivoDecifrado = System.getProperty("user.dir") + scanner.next();
+                    path = Paths.get(caminhoArquivoDecifrado);
 
                     if (!Files.exists(path)) {
                         Files.createFile(path);
@@ -142,8 +142,8 @@ public class AES {
     private static byte[] cifrar(byte[] textoSimples, byte[] chave) {
         int numBlocos = (textoSimples.length + 16) / 16;
         byte[] resultadoFinal = new byte[numBlocos * 16];
-        byte[][] matrizDeEstado = gerarMatrizDeEstado(chave);
-        byte[][] roundKeys = expandirChave(matrizDeEstado);
+        byte[][] matrizEstado = gerarMatrizEstado(chave);
+        byte[][] roundKeys = expandirChave(matrizEstado);
         byte[][] primeiraRoundKey = new byte[4][4];
         byte[][] ultimaRoundKey = new byte[4][4];
 
@@ -204,8 +204,8 @@ public class AES {
     private static byte[] decifrar(byte[] textoCifrado, byte[] chave) {
         int numBlocos = textoCifrado.length / 16;
         byte[] resultadoFinal = new byte[textoCifrado.length];
-        byte[][] matrizDeEstado = gerarMatrizDeEstado(chave);
-        byte[][] roundKeys = expandirChave(matrizDeEstado);
+        byte[][] matrizEstado = gerarMatrizEstado(chave);
+        byte[][] roundKeys = expandirChave(matrizEstado);
         byte[][] primeiraRoundKey = new byte[4][4];
         byte[][] ultimaRoundKey = new byte[4][4];
 
@@ -396,23 +396,23 @@ public class AES {
         return p;
     }
 
-    private static byte[][] mixColumns(byte[][] matrizDeEstado) {
+    private static byte[][] mixColumns(byte[][] matrizEstado) {
         for (int i = 0; i < 4; i++) {
             byte[] coluna = new byte[4];
             for (int j = 0; j < 4; j++) {
-                coluna[j] = matrizDeEstado[i][j];
+                coluna[j] = matrizEstado[i][j];
             }
 
-            matrizDeEstado[i][0] = (byte) (multiplicarPor02(coluna[0]) ^ multiplicarPor03(coluna[1]) ^ coluna[2] ^ coluna[3]);
-            matrizDeEstado[i][1] = (byte) (coluna[0] ^ multiplicarPor02(coluna[1]) ^ multiplicarPor03(coluna[2]) ^ coluna[3]);
-            matrizDeEstado[i][2] = (byte) (coluna[0] ^ coluna[1] ^ multiplicarPor02(coluna[2]) ^ multiplicarPor03(coluna[3]));
-            matrizDeEstado[i][3] = (byte) (multiplicarPor03(coluna[0]) ^ coluna[1] ^ coluna[2] ^ multiplicarPor02(coluna[3]));
+            matrizEstado[i][0] = (byte) (multiplicar02(coluna[0]) ^ multiplicar03(coluna[1]) ^ coluna[2] ^ coluna[3]);
+            matrizEstado[i][1] = (byte) (coluna[0] ^ multiplicar02(coluna[1]) ^ multiplicar03(coluna[2]) ^ coluna[3]);
+            matrizEstado[i][2] = (byte) (coluna[0] ^ coluna[1] ^ multiplicar02(coluna[2]) ^ multiplicar03(coluna[3]));
+            matrizEstado[i][3] = (byte) (multiplicar03(coluna[0]) ^ coluna[1] ^ coluna[2] ^ multiplicar02(coluna[3]));
         }
 
-        return matrizDeEstado;
+        return matrizEstado;
     }
 
-    private static byte multiplicarPor02(byte b) {
+    private static byte multiplicar02(byte b) {
         int result = (b & 0xFF) << 1;
         if ((result & 0x100) != 0) {
             result ^= 0x1B;
@@ -420,8 +420,8 @@ public class AES {
         return (byte) (result & 0xFF);
     }
 
-    private static byte multiplicarPor03(byte b) {
-        return (byte) (multiplicarPor02(b) ^ b);
+    private static byte multiplicar03(byte b) {
+        return (byte) (multiplicar02(b) ^ b);
     }
 
     public static byte[][] shiftRows(byte[][] estado) {
@@ -462,21 +462,21 @@ public class AES {
         return novoEstado;
     }
 
-    protected static byte[][] gerarMatrizDeEstado(byte[] chave) {
-        byte[][] matrizDeEstado = new byte[4][4];
+    protected static byte[][] gerarMatrizEstado(byte[] chave) {
+        byte[][] matrizEstado = new byte[4][4];
         int contador = 0;
 
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 4; j++) {
-                matrizDeEstado[i][j] = chave[contador];
+                matrizEstado[i][j] = chave[contador];
                 contador++;
             }
         }
 
-        return matrizDeEstado;
+        return matrizEstado;
     }
 
-    private static byte[][] expandirChave(byte[][] matrizDeEstado) {
+    private static byte[][] expandirChave(byte[][] matrizEstado) {
         byte[][] roundKeys = new byte[44][4];
         byte[][] temp = new byte[1][4];
         byte[][] palavra = new byte[1][4];
@@ -485,7 +485,7 @@ public class AES {
 
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 4; j++) {
-                roundKeys[i][j] = matrizDeEstado[i][j];
+                roundKeys[i][j] = matrizEstado[i][j];
             }
         }
 
